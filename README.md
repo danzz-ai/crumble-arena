@@ -78,9 +78,16 @@ and Danz confirms the one-line summary. Deployments are prepared by Muse and sig
 Danz himself in his own wallet — Muse never touches a private key.
 
 ```bash
-# testnet (example; deployer signs via baw)
+# mainnet via the deterministic CREATE2 factory (baw cannot deploy directly).
+# The factory call is a plain contract call the deployer signs via baw:
+#   to:   0x4e59b44847b379578588920cA78FbF26c0B4956C (deterministic deployment proxy)
+#   data: 32-byte salt (all zeros) + init code from hidden_files/factory-deploy-calldata.txt
+#   predicted address (salt 0): 0xaFcFBbb64bCcFc7449c465c5bFf5616c297aD0E2
+#   est. gas ~2,862,610 (~0.000143 BNB / ~$0.08 at 0.05 gwei)
+# Constructor takes (agentId, owner); owner is danzz.ai, NOT the factory.
+# Direct deploy (forge create) still works for testnet/local, with both args:
 forge create --rpc-url <bsc-testnet-rpc> --private-key <deployer-key> \
-  src/CrumbleArena.sol:CrumbleArena --constructor-args 0x60b9262456de011f7d15a54cdd8c48baaa8b022f
+  src/CrumbleArena.sol:CrumbleArena --constructor-args 0x60b9262456de011f7d15a54cdd8c48baaa8b022f 0x6d811a59725178960C9CF298978DA3d1B710AA95
 ```
 
 Verify source on the testnet explorer after deploy, then run the end-to-end flow:
