@@ -67,7 +67,7 @@ referee/ZK design is out of scope and is not pretended otherwise.
 ```bash
 cd contracts
 forge build
-forge test            # 28 tests, all passing
+forge test            # 31 tests, all passing
 forge test --gas-report
 ```
 
