@@ -26,7 +26,7 @@ contract CrumbleArenaTest is Test {
         // Realistic chain time (Nov 2026) so "day" numbers behave like mainnet.
         vm.warp(1_795_000_000);
         agentId = new MockAgentId();
-        arena = new CrumbleArena(address(agentId));
+        arena = new CrumbleArena(address(agentId), address(this));
 
         aliceId = uint256(keccak256(abi.encodePacked("alice")));
         bobId = uint256(keccak256(abi.encodePacked("bob")));
@@ -432,6 +432,20 @@ contract CrumbleArenaTest is Test {
         vm.prank(bob);
         arena.pause();
         assertTrue(arena.paused());
+    }
+
+    function testOwnerSetAtDeploy() public view {
+        assertEq(arena.owner(), address(this));
+    }
+
+    function testConstructorRevertsZeroOwner() public {
+        vm.expectRevert(CrumbleArena.ZeroAddress.selector);
+        new CrumbleArena(address(agentId), address(0));
+    }
+
+    function testConstructorRevertsZeroAgentId() public {
+        vm.expectRevert(CrumbleArena.ZeroAddress.selector);
+        new CrumbleArena(address(0), address(this));
     }
 
     // ---- Views / level curve ----

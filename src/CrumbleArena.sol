@@ -128,10 +128,14 @@ contract CrumbleArena {
         _;
     }
 
-    constructor(address _agentId) {
+    /// @dev The owner is set explicitly at deploy time (not msg.sender) so the
+    ///      contract can be deployed through a deterministic CREATE2 factory
+    ///      while the owner stays the project wallet (danzz.ai).
+    constructor(address _agentId, address _owner) {
         if (_agentId == address(0)) revert ZeroAddress();
+        if (_owner == address(0)) revert ZeroAddress();
         agentId = IAgentId(_agentId);
-        owner = msg.sender;
+        owner = _owner;
     }
 
     /// @notice Register a fighter. One profile per Agent ID tokenId, one tokenId per address.
